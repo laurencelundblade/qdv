@@ -47,6 +47,7 @@ int main(int argc, const char * argv[])
     QCBOREncode_AddInt64ToMapN(&EC, 66, -999999999);
     QCBOREncode_AddUInt64ToMapN(&EC, 66, -999999999);
     QCBOREncode_BstrWrap(&EC);
+    QCBOREncode_AddTag(&EC, 99);
     QCBOREncode_AddFloatNoPreferred(&EC, 99.999f);
     QCBOREncode_AddDoubleToMapN(&EC, 66, 99.9999999);
     QCBOREncode_CloseBstrWrap2(&EC,  true, &x);
