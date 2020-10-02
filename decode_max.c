@@ -11,7 +11,7 @@
 
 
 #include "qcbor/qcbor_decode.h"
-
+#include "qcbor/qcbor_spiffy_decode.h"
 
 /* These two symbols hopefully appear at the start and
  allow use of nm(1) to list symbols in order so the
@@ -66,8 +66,49 @@ int main(int argc, const char * argv[])
         return -3;
     }
 
+    // This won't actually run correctly, but does link correctly
+    int64_t nInt;
+    uint64_t uInt;
+    double dDoub;
+    QCBORDecode_GetInt64(&DC, &nInt);
+
+    QCBORDecode_GetInt64ConvertAll(&DC, 0xff, &nInt);
+
+    QCBORDecode_GetUInt64ConvertAll(&DC, 0xff, &uInt);
+
+    QCBORDecode_GetDoubleConvertAll(&DC, 0xff, &dDoub);
+
+    UsefulBufC UB;
+    QCBORDecode_GetByteStringInMapN(&DC, 9, &UB);
+
+
+    bool b;
+    QCBORDecode_GetBool(&DC, &b);
+
+    QCBORDecode_GetEpochDate(&DC, 0, &nInt);
+
+    QCBORDecode_GetBignumInMapN(&DC, 0, 0, &UB, &b);
+
+    QCBORDecode_GetDecimalFraction(&DC, 0, &nInt, &nInt);
+
+    UsefulBuf B = {NULL, 0};
+    QCBORDecode_GetBigFloatBig(&DC, 0, B, &UB, &b, &nInt);
+    
     QCBORDecode_IsTagged(&DC, &Item, 5);
 
+    QCBORDecode_EnterMapFromMapSZ(&DC, "map");
+    QCBORDecode_ExitMap(&DC);
+
+    QCBORDecode_EnterArrayFromMapSZ(&DC, "map");
+    QCBORDecode_ExitArray(&DC);
+
+    QCBORDecode_EnterBstrWrapped(&DC, 0, &UB);
+    QCBORDecode_ExitBstrWrapped(&DC);
+
+    QCBORDecode_GetItemInMapN(&DC, 0, 0, &Item);
+
+    QCBORDecode_GetItemsInMap(&DC, &Item);
+    
     if(QCBORDecode_Finish(&DC)) {
         return -4;
     }
