@@ -6,7 +6,7 @@
 # with the offsets of program text, so they are omitted
 
 nm -n -t d -U $1 |\
-grep ' [Tt] ' |\
+grep ' [TtSs] ' |\
 awk 'NR!=1{printf "%-40s %4s\n", name, $1 - offset }
      {offset=$1; name=$3}' |\
 grep -v __mh_execute |\
