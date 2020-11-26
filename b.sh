@@ -47,7 +47,7 @@ qdv/sizes.sh decode_max
 qdv/sizes.sh encode_max
 
 # Compute the combinations of ifdefs and write to lines in a file
-set="-DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS"
+set="-DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS"
 stringpermutations "" "$set" > /tmp/b.$$
 
 # make and test each combination of ifdefs
