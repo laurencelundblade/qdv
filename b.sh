@@ -59,6 +59,13 @@ qdv/sizes.sh decode_max
 qdv/sizes.sh encode_max
 
 
+# Build for C++ with clang and LLVM
+make -f qdv/Makefile.min clean > /dev/null
+make -f qdv/Makefile.min qcbormincpp
+make -f qdv/Makefile.max clean > /dev/null
+make -f qdv/Makefile.max qcbormincpp
+
+
 # Compute the combinations of ifdefs and write to lines in a file
 set="-DQCBOR_DISABLE_FLOAT_HW_USE"
 set+=" -DQCBOR_DISABLE_PREFERRED_FLOAT"
