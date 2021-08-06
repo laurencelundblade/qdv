@@ -10,7 +10,7 @@
 
 CC=cc
 
-CFLAGS=-I inc -I test -Os 
+CFLAGS=$(CMD_LINE) -I inc -I test -Os 
 
 
 
