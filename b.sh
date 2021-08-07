@@ -83,12 +83,14 @@ warn_flags+=" -Wshadow"
 warn_flags+=" -Wconversion"
 warn_flags+=" -Wcast-qual"
 
+cpp_warn_flags="$warn_flags"
+cpp_warn_flags+=" -std=c++11"
 
 # Build for C++ with clang and LLVM
 make -f qdv/Makefile.min clean > /dev/null
-make -f qdv/Makefile.min qcbormincpp "CMD_LINE=$warn_flags"
+make -f qdv/Makefile.min qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
 make -f qdv/Makefile.max clean > /dev/null
-make -f qdv/Makefile.max qcbormincpp "CMD_LINE=$warn_flags"
+make -f qdv/Makefile.max qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
 
 
 # Add these after the C++ tests

@@ -12,7 +12,7 @@ CC=cc
 
 CFLAGS=$(CMD_LINE) -I inc -I test -Os 
 
-CXXFLAGS=$(CMD_LINE) -I inc -I test -Os 
+CXXFLAGS=$(CXX_CMD_LINE) -I inc -I test -Os 
 
 
 
