@@ -28,7 +28,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ==============================================================================*/
-//  Created by Laurence Lundblade on 10/26/18.
+//  Created by Laurence Lundblade on 7/29/2021.
 
 #include <iostream>
 
@@ -42,7 +42,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  check that calling QCBOR from c++ works
  in the automated builds.
 
- A small user of CBOR encoding and decoding
+ A small use of CBOR encoding and decoding
  that is good as an example and for
  checking code size with all the
  inlining and dead stripping on.
