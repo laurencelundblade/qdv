@@ -1,6 +1,6 @@
 /*==============================================================================
 
-Copyright (c) 2018, Laurence Lundblade.
+Copyright (c) 2018,2021 Laurence Lundblade.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,15 +28,21 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ==============================================================================*/
-//  Created by Laurence Lundblade on 10/26/18.
+//  Created by Laurence Lundblade on 7/29/2021.
 
-#include <stdio.h>
-#include "qcbor/qcbor.h"
+#include <iostream>
+
+#include "qcbor/qcbor_encode.h"
+#include "qcbor/qcbor_decode.h"
 
 
 
 /*
- A small user of CBOR encoding and decoding
+ A c++ source file that calls QCBOR to
+ check that calling QCBOR from c++ works
+ in the automated builds.
+
+ A small use of CBOR encoding and decoding
  that is good as an example and for
  checking code size with all the
  inlining and dead stripping on.
@@ -175,6 +181,8 @@ int main(int argc, const char * argv[])
     if(QCBORDecode_Finish(&DC)) {
         return -13;
     }
+
+    std::cout << "C++ test complete\n";
 
     return 0;
 }

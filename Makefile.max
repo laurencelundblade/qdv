@@ -1,6 +1,6 @@
 # Makefile -- UNIX-style make for qcbor as a lib and command line test
 #
-# Copyright (c) 2018-2020, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2018-2021, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -10,7 +10,9 @@
 
 CC=cc
 
-CFLAGS=-I inc -I test -Os 
+CFLAGS=$(CMD_LINE) -I inc -I test -Os 
+
+CXXFLAGS=$(CXX_CMD_LINE) -I inc -I test -Os 
 
 
 
@@ -39,9 +41,11 @@ encode_min: libqcbor.a qdv/encode_min.o
 decode_min:	libqcbor.a qdv/decode_min.o
 	$(CC) -dead_strip -o $@ $^
 
-
-qcbormin: libqcbor.a min_use_main.o
+qcbormin: libqcbor.a qdv/min_use_main.o
 	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+qcbormincpp: libqcbor.a qdv/min_use_main_cpp.o
+	$(CXX) -dead_strip -o $@ $^ libqcbor.a
 
 libqcbor.a: $(QCBOR_OBJ)
 	ar -r $@ $^
@@ -65,20 +69,6 @@ cmd_line_main.o: test/run_tests.h $(PUBLIC_INTERFACE)
 
 min_use_main.o: $(PUBLIC_INTERFACE)
 
-ifeq ($(PREFIX),)
-    PREFIX := /usr/local
-endif
-
-install: libqcbor.a $(PUBLIC_INTERFACE)
-	install -d $(DESTDIR)$(PREFIX)/lib/
-	install -m 644 libqcbor.a $(DESTDIR)$(PREFIX)/lib/
-	install -d $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor.h $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor/qcbor_private.h $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor/qcbor_common.h $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor/qcbor_decode.h $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor/qcbor_encode.h $(DESTDIR)$(PREFIX)/include/qcbor
-	install -m 644 inc/qcbor/UsefulBuf.h $(DESTDIR)$(PREFIX)/include/qcbor
 
 clean:
-	rm -f $(QCBOR_OBJ) $(TEST_OBJ) libqcbor.a min_use_main.o cmd_line_main.o
+	rm -f $(QCBOR_OBJ) $(TEST_OBJ) libqcbor.a qdv/min_use_main.o qdv/min_use_main_cpp.o cmd_line_main.o

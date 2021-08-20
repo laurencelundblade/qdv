@@ -59,6 +59,7 @@ qdv/sizes.sh decode_max
 qdv/sizes.sh encode_max
 
 
+
 # Compute the combinations of ifdefs and write to lines in a file
 set="-DQCBOR_DISABLE_FLOAT_HW_USE"
 set+=" -DQCBOR_DISABLE_PREFERRED_FLOAT"
@@ -78,12 +79,24 @@ stringpermutations "" "$set" > /tmp/b.$$
 warn_flags="-Wall"
 warn_flags+=" -Wextra"
 warn_flags+=" -Wpedantic"
-warn_flags+=" -Wstrict-prototypes"
 warn_flags+=" -Wshadow"
 warn_flags+=" -Wconversion"
 warn_flags+=" -Wcast-qual"
-warn_flags+=" -xc"
+
+cpp_warn_flags="$warn_flags"
+cpp_warn_flags+=" -std=c++11"
+
+# Build for C++ with clang and LLVM
+make -f qdv/Makefile.min clean > /dev/null
+make -f qdv/Makefile.min qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
+make -f qdv/Makefile.max clean > /dev/null
+make -f qdv/Makefile.max qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
+
+
+# Add these after the C++ tests
 warn_flags+=" -std=c99" 
+warn_flags+=" -xc"
+warn_flags+=" -Wstrict-prototypes"
 
 
 # Make once with the default compiler, llvm/clang on MacOS, and all
