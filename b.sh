@@ -112,7 +112,7 @@ while read opts; do
    echo "$opts"
    make clean > /dev/null
    # Throw away stdout, but not stderr so the compiler warnings show
-   make --silent "CC=/usr/local/bin/gcc-10" "CMD_LINE=$opts $warn_flags" 2>&1 | grep -v 'ar: creating'
+   make --silent "CC=/usr/local/bin/gcc-11" "CMD_LINE=$opts $warn_flags" 2>&1 | grep -v 'ar: creating'
    ./qcbortest > /tmp/bb.$$
    grep SUMMARY /tmp/bb.$$
 done < /tmp/b.$$
