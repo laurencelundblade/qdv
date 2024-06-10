@@ -69,6 +69,8 @@ set+=" -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS"
 set+=" -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS"
 set+=" -DQCBOR_DISABLE_UNCOMMON_TAGS"
 set+=" -DUSEFULBUF_DISABLE_ALL_FLOAT"
+set+=" -DQCBOR_DISABLE_TAGS"
+set+=" -DQCBOR_DISABLE_NON_INTEGER_LABELS"
 
 stringpermutations "" "$set" > /tmp/b.$$
 
@@ -112,7 +114,7 @@ while read opts; do
    echo "$opts"
    make clean > /dev/null
    # Throw away stdout, but not stderr so the compiler warnings show
-   make --silent "CC=/usr/local/bin/gcc-11" "CMD_LINE=$opts $warn_flags" 2>&1 | grep -v 'ar: creating'
+   make --silent "CMD_LINE=$opts $warn_flags" 2>&1 | grep -v 'ar: creating'
    ./qcbortest > /tmp/bb.$$
    grep SUMMARY /tmp/bb.$$
 done < /tmp/b.$$
