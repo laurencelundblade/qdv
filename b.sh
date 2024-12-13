@@ -2,7 +2,7 @@
 #
 # b.sh -- Before-release comprehensive test and build script for QCBOR
 #
-# Copyright (c) 2019-2021, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2019-2024, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -46,21 +46,7 @@ function stringpermutations {
 }
 
 
-# Build and print out the code size for smallest configuration 
-make clean > /dev/null
-make -f qdv/Makefile.min decode_min encode_min > /dev/null
-qdv/sizes.sh decode_min 
-qdv/sizes.sh encode_min
-
-# Build and print out the code size for largest configuration
-make clean > /dev/null
-make -f qdv/Makefile.max decode_max encode_max > /dev/null
-qdv/sizes.sh decode_max 
-qdv/sizes.sh encode_max
-
-
-
-# Compute the combinations of ifdefs and write to lines in a file
+# The set of pre-processor defines for disabling features
 set="-DQCBOR_DISABLE_FLOAT_HW_USE"
 set+=" -DQCBOR_DISABLE_PREFERRED_FLOAT"
 set+=" -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA"
@@ -72,49 +58,48 @@ set+=" -DUSEFULBUF_DISABLE_ALL_FLOAT"
 set+=" -DQCBOR_DISABLE_TAGS"
 set+=" -DQCBOR_DISABLE_NON_INTEGER_LABELS"
 
+# Compute the combinations of ifdefs and write to lines in a file
 stringpermutations "" "$set" > /tmp/b.$$
 
 
-# The QCBOR makefile uses a minimum of compiler flags so that it will
-# work out-of-the-box with a wide variety of compilers. This is where
-# compilation with a full set of warning flags is performed. This set
-# of flags has been thought through for gcc and clang/llvm.
-warn_flags="-Wall"
-warn_flags+=" -Wextra"
-warn_flags+=" -Wpedantic"
-warn_flags+=" -Wshadow"
-warn_flags+=" -Wconversion"
-warn_flags+=" -Wcast-qual"
-
-cpp_warn_flags="$warn_flags"
-cpp_warn_flags+=" -std=c++11"
-
-# Build for C++ with clang and LLVM
-make -f qdv/Makefile.min clean > /dev/null
-make -f qdv/Makefile.min qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
-make -f qdv/Makefile.max clean > /dev/null
-make -f qdv/Makefile.max qcbormincpp "CMD_LINE=$warn_flags" "CXX_CMD_LINE=$cpp_warn_flags"
+# Build and print out the code size for smallest configuration
+make clean > /dev/null
+make "CMD_LINE=$set" libqcbor.a > /dev/null
+make -f qdv/Makefile.qdv decode_min encode_min > /dev/null
+qdv/sizes.sh decode_min
+qdv/sizes.sh encode_min
 
 
-# Add these after the C++ tests
-warn_flags+=" -std=c99" 
-warn_flags+=" -xc"
-warn_flags+=" -Wstrict-prototypes"
+# Build and print out the code size for largest configuration
+make clean > /dev/null
+make libqcbor.a > /dev/null
+make -f qdv/Makefile.qdv decode_max encode_max > /dev/null
+qdv/sizes.sh decode_max
+qdv/sizes.sh encode_max
 
 
-# Make once with the default compiler, llvm/clang on MacOS, and all
+# Link the library with a C++ app
+make clean > /dev/null
+make libqcbor.a > /dev/null
+make -f qdv/Makefile.qdv qcbormincpp
+
+
+# Make once with warnings on
 # the warning flags set
-make --silent "CMD_LINE=$warn_flags" 2>&1 | grep -v 'ar: creating'
+make --silent warn 2>&1 | grep -v 'ar: creating'
 
+#TODO: fix this up to use either/both llvm or gcc
+#It used to be like this, but gcc doesn't work (so far) on latest MacOS versions
 
 # This is the big test fan out that takes some time to run. All
 # combinations of configuration flags are compiled and the tests run.
-# All warnings are turned on.  GCC is used since it is more strict.
+# All warnings are turned on.  It would be good to use GCC is used
+# but it is hard to install on latest MacOS. Gcc is more strict.
 while read opts; do
    echo "$opts"
    make clean > /dev/null
    # Throw away stdout, but not stderr so the compiler warnings show
-   make --silent "CMD_LINE=$opts $warn_flags" 2>&1 | grep -v 'ar: creating'
+   make --silent warn "CMD_LINE=$opts" 2>&1 | grep -v 'ar: creating'
    ./qcbortest > /tmp/bb.$$
    grep SUMMARY /tmp/bb.$$
 done < /tmp/b.$$
