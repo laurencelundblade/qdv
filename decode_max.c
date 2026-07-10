@@ -12,9 +12,6 @@
 
 #include "qcbor/qcbor_decode.h"
 #include "qcbor/qcbor_spiffy_decode.h"
-#include "qcbor/qcbor_main_decode.h"
-#include "qcbor/qcbor_tag_decode.h"
-#include "qcbor/qcbor_number_decode.h"
 
 /* These two symbols hopefully appear at the start and
  allow use of nm(1) to list symbols in order so the
@@ -41,6 +38,8 @@ int main(int argc, const char * argv[])
 
     static const uint8_t min[] = {0x81, 0xf5};
 
+    QCBORTagListOut TL;
+
     UsefulBuf_MAKE_STACK_UB(Pool, 100);
 
     // Decode it and see that is right
@@ -51,10 +50,16 @@ int main(int argc, const char * argv[])
     Item.uDataType = first_symbol_1();
     Item.val.string.ptr = first_symbol_2;
 
+    QCBORDecode_SetCallerConfiguredTagList(&DC, NULL);
+
     QCBORDecode_SetMemPool(&DC, Pool, true);
 
     QCBORDecode_Init(&DC, UsefulBuf_FROM_BYTE_ARRAY_LITERAL(min), QCBOR_DECODE_MODE_NORMAL);
 
+    QCBORDecode_GetNextWithTags(&DC, &Item, &TL);
+    if(Item.uDataType != QCBOR_TYPE_MAP) {
+        return -2;
+    }
 
     QCBORDecode_GetNext(&DC, &Item);
     if(Item.uDataType != QCBOR_TYPE_TRUE) {
@@ -89,6 +94,8 @@ int main(int argc, const char * argv[])
     UsefulBuf B = {NULL, 0};
     QCBORDecode_GetBigFloatBig(&DC, 0, B, &UB, &b, &nInt);
     
+    QCBORDecode_IsTagged(&DC, &Item, 5);
+
     QCBORDecode_EnterMapFromMapSZ(&DC, "map");
     QCBORDecode_ExitMap(&DC);
 
