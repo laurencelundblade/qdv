@@ -25,6 +25,7 @@
  * main repo. */
 test_entry more_tests[] = {
     TEST_ENTRY(HalfPrecisionAgainstRFCCodeTest),
+    TEST_ENTRY(EncodePrefPTest),
     {NULL, NULL, false}
 };
 
