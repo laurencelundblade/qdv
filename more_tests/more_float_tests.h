@@ -17,4 +17,6 @@
 
 int32_t HalfPrecisionAgainstRFCCodeTest(void);
 
+int32_t EncodePrefPTest(void);
+
 #endif /* more_float_tests_h */

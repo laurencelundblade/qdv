@@ -71,3 +71,111 @@ HalfPrecisionAgainstRFCCodeTest(void)
    }
    return 0;
 }
+
+
+static inline uint64_t
+CopyDoubleToUint64(double d)
+{
+   uint64_t u64;
+   memcpy(&u64, &d, sizeof(uint64_t));
+   return u64;
+}
+
+
+static inline uint32_t
+CopyFloatToUint32(float f)
+{
+uint32_t u32;
+   memcpy(&u32, &f, sizeof(uint32_t));
+   return u32;
+}
+
+
+static inline float
+CopyUint32ToFloat(uint32_t u32)
+{
+    float d;
+   memcpy(&d, &u32, sizeof(uint32_t));
+   return d;
+}
+
+
+#include "prefp-float-encode.h"
+#include "../test/float_tests.h"
+
+/* For now this is more about testing the draft-serialization sample code */
+int32_t
+EncodePrefPTest(void)
+{
+   long                        nResult;
+   const struct FloatTestCase  *pF;
+   unsigned long                binary32;
+   unsigned long long           binary64;
+   uint8_t                      buffer[10];
+   long long                    nResult2;
+
+   for(pF = FloatTestCases; pF->Preferred.len != 0; pF++) {
+      if(pF->fNumber == 0.0) {
+         continue;
+      }
+
+      binary32 = CopyFloatToUint32(pF->fNumber);
+
+      if(pF->fNumber == -INFINITY) {
+         buffer[9] = 9; // for break point setting
+      }
+
+      nResult = pref_plus_single_to_half(binary32);
+      if(nResult == -1) {
+         /* No conversion */
+         if(pF->Preferred.len == 3) {
+            return -1;
+         } else {
+            continue;
+         }
+      } else if(nResult == -2) {
+         /* Non-trivial NaN */
+         if(!UsefulBuf_Compare(UsefulBuf_FROM_SZ_LITERAL("\xf9\x7e\x00"), pF->Preferred)) {
+            return 99;
+         }
+      } else {
+         buffer[0] = 0xf9;
+         buffer[1] = (nResult & 0xff00) >> 8;
+         buffer[2] = nResult & 0xff;
+         UsefulBufC xx = {buffer, 3};
+         if(UsefulBuf_Compare(xx, pF->Preferred)) {
+            return 99;
+         }
+      }
+
+      binary64 = CopyDoubleToUint64(pF->dNumber);
+      nResult2 = pref_plus_double_to_single(binary64);
+
+      if(nResult == -1) {
+         /* No conversion */
+         if(pF->Preferred.len != 9) {
+            return -1;
+         } else {
+            continue;
+         }
+      } else if(nResult == -2) {
+         /* Non-trivial NaN */
+         if(!UsefulBuf_Compare(UsefulBuf_FROM_SZ_LITERAL("\xf9\x7e\x00"), pF->Preferred)) {
+            return 99;
+         }
+      } else {
+         float nR = CopyUint32ToFloat((uint32_t)nResult2);
+         if(isnan(nR)) {
+            if(!isnan(pF->fNumber)) {
+               return 99;
+            }
+         } else {
+            if(nR != pF->fNumber) {
+               return 99;
+            }
+         }
+      }
+   }
+
+   return 0;
+}
