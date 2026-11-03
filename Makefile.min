@@ -1,6 +1,6 @@
 # Makefile -- UNIX-style make for qcbor as a lib and command line test
 #
-# Copyright (c) 2018-2021, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2018-2026, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -8,12 +8,12 @@
 #
 
 
-CC=/usr/local/bin/gcc-11
-CXX=/usr/local/bin/g++-11
+#CC=/usr/local/bin/gcc-11
+#CXX=/usr/local/bin/g++-11
 
-CFLAGS=$(CMD_LINE) -I inc -I test -Os -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DLESS_ERR_CHECK -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS -DQCBOR_DISABLE_UNCOMMON_TAGS 
+CFLAGS=$(CMD_LINE) -I inc -I test -Os -DQCBOR_DISABLE_ALL
 
-CXXFLAGS=$(CXX_CMD_LINE) -I inc -I test -Os -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DLESS_ERR_CHECK -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS -DQCBOR_DISABLE_UNCOMMON_TAGS
+CXXFLAGS=$(CXX_CMD_LINE) -I inc -I test -Os -DQCBOR_DISABLE_ALL
 
 
 
@@ -70,5 +70,5 @@ min_use_main.o: $(PUBLIC_INTERFACE)
 
 
 clean:
-	rm -f $(QCBOR_OBJ) $(TEST_OBJ) libqcbor.a qdv/min_use_main.o qdv/min_use_main_cpp.o cmd_line_main.o
+	rm -f $(QCBOR_OBJ) $(TEST_OBJ) libqcbor.a qdv/encode_max.o qdv/encode_min.o qdv/decode_min.o qdv/min_use_main.o qdv/min_use_main_cpp.o cmd_line_main.o
 
