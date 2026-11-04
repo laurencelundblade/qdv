@@ -64,7 +64,7 @@ stringpermutations "" "$set" > /tmp/b.$$
 
 # Build and print out the code size for smallest configuration
 make clean > /dev/null
-make "CMD_LINE=$set" libqcbor.a > /dev/null
+make "CMD_LINE=$set -fno-stack-protector" libqcbor.a > /dev/null
 make -f qdv/Makefile.qdv decode_min encode_min > /dev/null
 qdv/sizes.sh decode_min
 qdv/sizes.sh encode_min
