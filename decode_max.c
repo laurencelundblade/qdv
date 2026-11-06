@@ -1,7 +1,7 @@
 /*==============================================================================
  decode_max.c -- Used for code size measurement of max size of decoder.
 
- Copyright (c) 2020, Laurence Lundblade. All rights reserved.
+ Copyright (c) 2020-2026, Laurence Lundblade. All rights reserved.
 
  SPDX-License-Identifier: BSD-3-Clause
 
@@ -12,9 +12,6 @@
 
 #include "qcbor/qcbor_decode.h"
 #include "qcbor/qcbor_spiffy_decode.h"
-#include "qcbor/qcbor_main_decode.h"
-#include "qcbor/qcbor_tag_decode.h"
-#include "qcbor/qcbor_number_decode.h"
 
 /* These two symbols hopefully appear at the start and
  allow use of nm(1) to list symbols in order so the

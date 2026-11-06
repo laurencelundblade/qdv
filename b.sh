@@ -2,7 +2,7 @@
 #
 # b.sh -- Before-release comprehensive test and build script for QCBOR
 #
-# Copyright (c) 2019-2024, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2019-2026, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -49,13 +49,12 @@ function stringpermutations {
 # The set of pre-processor defines for disabling features
 set="-DQCBOR_DISABLE_FLOAT_HW_USE"
 set+=" -DQCBOR_DISABLE_PREFERRED_FLOAT"
-set+=" -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA"
+set+=" -DUSEFULBUF_DISABLE_ALL_FLOAT"
 set+=" -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS"
+set+=" -DQCBOR_DISABLE_EXP_AND_MANTISSA"
 set+=" -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS"
 set+=" -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS"
 set+=" -DQCBOR_DISABLE_UNCOMMON_TAGS"
-set+=" -DUSEFULBUF_DISABLE_ALL_FLOAT"
-set+=" -DUSEFULBUF_DISABLE_STREAMING"
 set+=" -DQCBOR_DISABLE_TAGS"
 set+=" -DQCBOR_DISABLE_NON_INTEGER_LABELS"
 
@@ -65,7 +64,7 @@ stringpermutations "" "$set" > /tmp/b.$$
 
 # Build and print out the code size for smallest configuration
 make clean > /dev/null
-make "CMD_LINE=$set" libqcbor.a > /dev/null
+make "CMD_LINE=$set -fno-stack-protector" libqcbor.a > /dev/null
 make -f qdv/Makefile.qdv decode_min encode_min > /dev/null
 qdv/sizes.sh decode_min
 qdv/sizes.sh encode_min
@@ -94,8 +93,7 @@ make --silent warn 2>&1 | grep -v 'ar: creating'
 
 # This is the big test fan out that takes some time to run. All
 # combinations of configuration flags are compiled and the tests run.
-# All warnings are turned on.  It would be good to use GCC is used
-# but it is hard to install on latest MacOS. Gcc is more strict.
+# All warnings are turned on.
 while read opts; do
    echo "$opts"
    make clean > /dev/null
