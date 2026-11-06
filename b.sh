@@ -2,7 +2,7 @@
 #
 # b.sh -- Before-release comprehensive test and build script for QCBOR
 #
-# Copyright (c) 2019-2024, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2019-2026, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
