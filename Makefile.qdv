@@ -1,0 +1,52 @@
+# Makefile -- UNIX-style make for qcbor as a lib and command line test
+#
+# Copyright (c) 2018-2026, Laurence Lundblade. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# See BSD-3-Clause license in README.md
+#
+
+
+
+#CFLAGS=$(CMD_LINE) -I inc -I test -fno-stack-protector -Os -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DLESS_ERR_CHECK -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS -DQCBOR_DISABLE_UNCOMMON_TAGS  -DQCBOR_DISABLE_TAGS -DQCBOR_DISABLE_NON_INTEGER_LABELS
+
+#CXXFLAGS=$(CXX_CMD_LINE) -I inc -I test -Os -DQCBOR_CONFIG_DISABLE_EXP_AND_MANTISSA -DQCBOR_DISABLE_FLOAT_HW_USE -DQCBOR_DISABLE_PREFERRED_FLOAT -DLESS_ERR_CHECK -DQCBOR_DISABLE_ENCODE_USAGE_GUARDS -DQCBOR_DISABLE_INDEFINITE_LENGTH_STRINGS -DQCBOR_DISABLE_INDEFINITE_LENGTH_ARRAYS -DQCBOR_DISABLE_UNCOMMON_TAGS
+
+CFLAGS=-I inc
+CXXFLAGS=$(CFLAGS) -std=c++11 
+
+.PHONY: all install clean
+
+all: qcbortest qcbormin libqcbor.a
+
+encode_max: libqcbor.a qdv/encode_max.o
+	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+decode_max: libqcbor.a qdv/decode_max.o
+	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+encode_min: libqcbor.a qdv/encode_min.o
+	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+decode_min: libqcbor.a qdv/decode_min.o
+	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+qcbormin: libqcbor.a qdv/min_use_main.o
+	$(CC) -dead_strip -o $@ $^ libqcbor.a
+
+qcbormincpp: libqcbor.a qdv/min_use_main_cpp.o
+	$(CXX) -dead_strip -o $@ $^ libqcbor.a
+
+
+cmd_line_main.o: test/run_tests.h $(PUBLIC_INTERFACE)
+
+min_use_main.o: $(PUBLIC_INTERFACE)
+
+
+clean:
+	rm -f $(QCBOR_OBJ) $(TEST_OBJ)\
+               libqcbor.a \
+               qdv/encode_max.o qdv/decode_max.o qdv/encode_min.o qdv/decode_min.o qdv/min_use_main.o qdv/min_use_main_cpp.o cmd_line_main.o \
+               qdv/encode_max qdv/encode_min qdv/decode_max qdv/decode_min qcbormin qcbormincpp
+

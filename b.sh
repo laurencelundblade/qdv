@@ -2,7 +2,7 @@
 #
 # b.sh -- Before-release comprehensive test and build script for QCBOR
 #
-# Copyright (c) 2019-2024, Laurence Lundblade. All rights reserved.
+# Copyright (c) 2019-2026, Laurence Lundblade. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -65,7 +65,7 @@ stringpermutations "" "$set" > /tmp/b.$$
 
 # Build and print out the code size for smallest configuration
 make clean > /dev/null
-make "CMD_LINE=$set" libqcbor.a > /dev/null
+make "CMD_LINE=$set -fno-stack-protector" libqcbor.a > /dev/null
 make -f qdv/Makefile.qdv decode_min encode_min > /dev/null
 qdv/sizes.sh decode_min
 qdv/sizes.sh encode_min
